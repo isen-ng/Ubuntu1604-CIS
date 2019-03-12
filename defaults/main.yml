@@ -347,10 +347,9 @@ ubuntu1604cis_host_allow:
   - "192.168.0.0/255.255.0.0"
   - "0.0.0.0/0.0.0.0"
 
-ubuntu1604cis_firewall: firewalld
-# ubuntu1604cis_firewall: iptables
-
-ubuntu1604cis_firewall_services:
+### Firewall
+ubuntu1604cis_setup_firewalld: false
+ubuntu1604cis_firewalld_services:
   - ssh
   - dhcpv6-client
 
@@ -428,6 +427,3 @@ tmp_mount_options:
 chrony_config_file:
   RedHat: /etc/chrony.conf
   Debian: /etc/chrony/chrony.conf
-
-### Firewall
-ubuntu1604cis_setup_firewall: false

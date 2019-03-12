@@ -352,7 +352,7 @@
       name: firewalld
       state: present
       install_recommends: false
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
@@ -365,7 +365,7 @@
       name: firewalld
       state: started
       enabled: true
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
@@ -378,26 +378,28 @@
       dest: /etc/firewalld/firewalld.conf
       regexp: "^DefaultZone"
       line: "DefaultZone=drop"
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
       - patch
       - firewalld
       - rule_3.6.2
+      - nottested
 
 - name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Enable drop zone"
   firewalld:
       state: enabled
       zone: drop
       permanent: true
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
       - patch
       - firewalld
       - rule_3.6.2
+      - nottested
 
 - name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured | Allow loopback on trusted zone"
   firewalld:
@@ -405,7 +407,7 @@
       zone: trusted
       interface: lo
       permanent: true
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
@@ -417,9 +419,11 @@
   firewalld:
       state: enabled
       zone: drop
-      rich_rule: rule family=ipv4 source address="127.0.0.1" destination not address="127.0.0.1" drop
+      # https://bugzilla.redhat.com/show_bug.cgi?id=1326462
+      # must specific port and protocol
+      rich_rule: "rule family=\"ipv4\" source address=\"127.0.0.1\" destination not address=\"127.0.0.1\" port port=\"0-65535\" protocol=\"tcp\" drop"
       permanent: true
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - scored
@@ -430,12 +434,12 @@
 - name: "NOTSCORED | 3.6.4 | PATCH | Ensure outbound and established connections are configured"
   command: /bin/true
   changed_when: false
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   tags:
       - level1
       - notscored
       - patch
-      - iptables
+      - firewalld
       - rule_3.6.4
       - notimplemented
 
@@ -446,15 +450,16 @@
       zone: drop
       permanent: true
       immediate: true
-  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  when: ubuntu1604cis_setup_firewalld
   notify: restart firewalld
-  with_items: "{{ ubuntu1604cis_firewall_services }}"
+  with_items: "{{ ubuntu1604cis_firewalld_services }}"
   tags:
       - level1
       - scored
       - patch
       - firewalld
       - rule_3.6.5
+      - nottested
 
 - name: "NOTSCORED | 3.7 | PATCH | Ensure wireless interfaces are disabled"
   command: /bin/true
