@@ -347,7 +347,7 @@
       - patch
       - rule_3.5.4
 
-- name: "SCORED | 3.6 | PATCH | Ensure firewalld is installed and started | CUSTOM"
+- name: "SCORED | 3.6.1 | PATCH | Ensure firewalld is installed and started | Install"
   apt:
       name: firewalld
       state: present
@@ -357,9 +357,10 @@
       - level1
       - scored
       - patch
-      - rule_3.6
+      - firewalld
+      - rule_3.6.1
 
-- name: "SCORED | 3.6 | PATCH | Ensure firewalld is installed and started | CUSTOM"
+- name: "SCORED | 3.6.1 | PATCH | Ensure firewalld is installed and started | Start"
   service:
       name: firewalld
       state: started
@@ -369,33 +370,10 @@
       - level1
       - scored
       - patch
-      - rule_3.6
-
-- name: "SCORED | 3.6.1 | PATCH | Ensure iptables is installed"
-  apt:
-      name: iptables
-      state: present
-      install_recommends: false
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
-  tags:
-      - level1
-      - scored
-      - patch
+      - firewalld
       - rule_3.6.1
 
-- name: "SCORED | 3.6.1 | PATCH | Ensure iptables is installed and started"
-  service:
-      name: iptables
-      state: started
-      enabled: true
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
-  tags:
-      - level1
-      - scored
-      - patch
-      - rule_3.6.1
-
-- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy"
+- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Set default zone to drop"
   lineinfile:
       dest: /etc/firewalld/firewalld.conf
       regexp: "^DefaultZone"
@@ -405,9 +383,10 @@
       - level1
       - scored
       - patch
+      - firewalld
       - rule_3.6.2
 
-- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy"
+- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Enable drop zone"
   firewalld:
       state: enabled
       zone: drop
@@ -417,29 +396,36 @@
       - level1
       - scored
       - patch
+      - firewalld
       - rule_3.6.2
 
-- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy"
-  command: /bin/true
-  changed_when: false
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
+- name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured | Allow loopback on trusted zone"
+  firewalld:
+      state: enabled
+      zone: trusted
+      interface: lo
+      permanent: true
+  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
   tags:
       - level1
       - scored
       - patch
-      - rule_3.6.2
-      - notimplemented
-
-- name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured"
-  command: /bin/true
-  changed_when: false
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
-  tags:
-      - level1
-      - scored
-      - patch
+      - firewalld
       - rule_3.6.3
-      - notimplemented
+
+- name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured | Deny loopback from others"
+  firewalld:
+      state: enabled
+      zone: drop
+      rich_rule: rule family=ipv4 source address="127.0.0.1" destination not address="127.0.0.1" drop
+      permanent: true
+  when: ubuntu1604cis_firewall == "firewalld" and ubuntu1604cis_setup_firewall
+  tags:
+      - level1
+      - scored
+      - patch
+      - firewalld
+      - rule_3.6.3
 
 - name: "NOTSCORED | 3.6.4 | PATCH | Ensure outbound and established connections are configured"
   command: /bin/true
@@ -449,6 +435,7 @@
       - level1
       - notscored
       - patch
+      - iptables
       - rule_3.6.4
       - notimplemented
 
@@ -466,18 +453,8 @@
       - level1
       - scored
       - patch
+      - firewalld
       - rule_3.6.5
-
-- name: "SCORED | 3.6.5 | PATCH | Ensure firewall rules exist for all open ports"
-  command: /bin/true
-  changed_when: false
-  when: ubuntu1604cis_firewall == "iptables" and ubuntu1604cis_setup_firewall
-  tags:
-      - level1
-      - scored
-      - patch
-      - rule_3.6.5
-      - notimplemented
 
 - name: "NOTSCORED | 3.7 | PATCH | Ensure wireless interfaces are disabled"
   command: /bin/true

@@ -1,4 +1,7 @@
 ---
+# use python 3 for ubuntu
+ansible_python_interpreter: /usr/bin/python3
+
 # defaults file for Ubuntu1604-CIS
 ubuntu1604cis_skip_for_travis: false
 
