@@ -349,6 +349,7 @@ ubuntu1604cis_host_allow:
 
 ### Firewall
 ubuntu1604cis_setup_firewalld: false
+ubuntu1604cis_firewalld_ports: []
 ubuntu1604cis_firewalld_services:
   - ssh
   - dhcpv6-client

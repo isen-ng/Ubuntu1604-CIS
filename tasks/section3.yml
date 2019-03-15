@@ -385,7 +385,6 @@
       - patch
       - firewalld
       - rule_3.6.2
-      - nottested
 
 - name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Enable drop zone"
   firewalld:
@@ -399,7 +398,6 @@
       - patch
       - firewalld
       - rule_3.6.2
-      - nottested
 
 - name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured | Allow loopback on trusted zone"
   firewalld:
@@ -443,7 +441,7 @@
       - rule_3.6.4
       - notimplemented
 
-- name: "SCORED | 3.6.5 | PATCH | Ensure firewall rules exist for all open ports"
+- name: "SCORED | 3.6.5 | PATCH | Ensure firewall rules exist for all open ports | Services"
   firewalld:
       service: "{{ item }}"
       state: enabled
@@ -459,7 +457,23 @@
       - patch
       - firewalld
       - rule_3.6.5
-      - nottested
+
+- name: "SCORED | 3.6.5 | PATCH | Ensure firewall rules exist for all open ports | Ports"
+  firewalld:
+      port: "{{ item }}"
+      state: enabled
+      zone: drop
+      permanent: true
+      immediate: true
+  when: ubuntu1604cis_setup_firewalld
+  notify: restart firewalld
+  with_items: "{{ ubuntu1604cis_firewalld_ports }}"
+  tags:
+      - level1
+      - scored
+      - patch
+      - firewalld
+      - rule_3.6.5
 
 - name: "NOTSCORED | 3.7 | PATCH | Ensure wireless interfaces are disabled"
   command: /bin/true
