@@ -557,33 +557,47 @@
       - patch
       - rule_1.3.1
 
-- name: "SCORED | 1.3.2 | PATCH | Ensure filesystem integrity is regularly checked"
+- name: "SCORED | 1.3.1 | PATCH | Ensure AIDE is installed | Set Quiet reports"
   lineinfile:
     dest: /etc/default/aide
     regexp: '^/# QUIETREPORTS|QUIETREPORTS'
     line: "QUIETREPORTS=yes"
     state: present     
   when:
-      - ubuntu1604cis_rule_1_3_2
+      - ubuntu1604cis_config_aide
+      - ubuntu1604cis_rule_1_3_1
   tags:
       - level1
       - scored
       - aide
       - file_integrity
       - patch
-      - rule_1.3.2
+      - rule_1.3.1
 
+- name: "SCORED | 1.3.1 | PATCH | Ensure AIDE is installed | Set mailto"
+  lineinfile:
+    dest: /etc/default/aide
+    backup: yes
+    regexp: '^MAILTO'
+    line: "MAILTO={{ ubuntu1604cis_aide_mailto }}"
+    state: present
+  when:
+    - ubuntu1604cis_config_aide
+    - ubuntu1604cis_rule_1_3_1
+  tags:
+      - level1
+      - scored
+      - aide
+      - file_integrity
+      - patch
+      - rule_1.3.1
+
+# cron already installed it's own daily job in /etc/cron.daily/aide
 - name: "SCORED | 1.3.2 | PATCH | Ensure filesystem integrity is regularly checked"
-  cron:
-      name: Run AIDE integrity check weekly
-      cron_file: "{{ ubuntu1604cis_aide_cron['cron_file'] }}"
-      user: "{{ ubuntu1604cis_aide_cron['cron_user'] }}"
-      minute: "{{ ubuntu1604cis_aide_cron['aide_minute'] | default('0') }}"
-      hour: "{{ ubuntu1604cis_aide_cron['aide_hour'] | default('5') }}"
-      day: "{{ ubuntu1604cis_aide_cron['aide_day'] | default('*') }}"
-      month: "{{ ubuntu1604cis_aide_cron['aide_month'] | default('*') }}"
-      weekday: "{{ ubuntu1604cis_aide_cron['aide_weekday'] | default('*') }}"
-      job: "{{ ubuntu1604cis_aide_cron['aide_job'] }}"
+  systemd:
+      name: cron
+      state: started
+      enabled: true
   when:
       - ubuntu1604cis_rule_1_3_2
   tags:
