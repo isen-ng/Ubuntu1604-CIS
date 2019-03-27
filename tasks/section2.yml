@@ -383,7 +383,7 @@
 
 - name: "SCORED | 2.2.7 | PATCH | Ensure NFS and RPC are not enabled"
   service:
-      name: nfs
+      name: nfs-server
       state: stopped
       enabled: false
   when:

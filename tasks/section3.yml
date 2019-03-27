@@ -373,32 +373,6 @@
       - firewalld
       - rule_3.6.1
 
-- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Set default zone to drop"
-  lineinfile:
-      dest: /etc/firewalld/firewalld.conf
-      regexp: "^DefaultZone"
-      line: "DefaultZone=drop"
-  when: ubuntu1604cis_setup_firewalld
-  tags:
-      - level1
-      - scored
-      - patch
-      - firewalld
-      - rule_3.6.2
-
-- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Enable drop zone"
-  firewalld:
-      state: enabled
-      zone: drop
-      permanent: true
-  when: ubuntu1604cis_setup_firewalld
-  tags:
-      - level1
-      - scored
-      - patch
-      - firewalld
-      - rule_3.6.2
-
 - name: "SCORED | 3.6.3 | PATCH | Ensure loopback traffic is configured | Allow loopback on trusted zone"
   firewalld:
       state: enabled
@@ -474,6 +448,32 @@
       - patch
       - firewalld
       - rule_3.6.5
+
+- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Set default zone to drop"
+  lineinfile:
+      dest: /etc/firewalld/firewalld.conf
+      regexp: "^DefaultZone"
+      line: "DefaultZone=drop"
+  when: ubuntu1604cis_setup_firewalld
+  tags:
+      - level1
+      - scored
+      - patch
+      - firewalld
+      - rule_3.6.2
+
+- name: "SCORED | 3.6.2 | PATCH | Ensure default deny firewall policy | Enable drop zone"
+  firewalld:
+      state: enabled
+      zone: drop
+      permanent: true
+  when: ubuntu1604cis_setup_firewalld
+  tags:
+      - level1
+      - scored
+      - patch
+      - firewalld
+      - rule_3.6.2
 
 - name: "NOTSCORED | 3.7 | PATCH | Ensure wireless interfaces are disabled"
   command: /bin/true
