@@ -380,6 +380,7 @@
       interface: lo
       permanent: true
   when: ubuntu1604cis_setup_firewalld
+  notify: restart firewalld
   tags:
       - level1
       - scored
@@ -396,6 +397,7 @@
       rich_rule: "rule family=\"ipv4\" source address=\"127.0.0.1\" destination not address=\"127.0.0.1\" port port=\"0-65535\" protocol=\"tcp\" drop"
       permanent: true
   when: ubuntu1604cis_setup_firewalld
+  notify: restart firewalld
   tags:
       - level1
       - scored
@@ -467,6 +469,7 @@
       regexp: "^DefaultZone"
       line: "DefaultZone=drop"
   when: ubuntu1604cis_setup_firewalld
+  notify: restart firewalld
   tags:
       - level1
       - scored
@@ -480,6 +483,7 @@
       zone: drop
       permanent: true
   when: ubuntu1604cis_setup_firewalld
+  notify: restart firewalld
   tags:
       - level1
       - scored
